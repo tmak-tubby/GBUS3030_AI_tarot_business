@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcana AI | AI Spiritual Home</title>
+    <title>Lumina | AI Spiritual Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Warm, retro-mystical color palette */
         :root {
-            --bg-color: #F4F1EA; /* Soft cream */
-            --text-main: #2C423F; /* Deep vintage green */
+            --bg-color: #F4F1EA;
+            --text-main: #2C423F;
             --accent-gold: #C5A059;
-            --accent-warm: #D96C4E; /* Terracotta */
+            --accent-warm: #D96C4E;
             --card-bg: #FFFFFF;
         }
 
         body {
-            font-family: 'Georgia', serif; /* Classic, journal-like feel */
+            font-family: 'Georgia', serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
@@ -32,6 +32,9 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -41,324 +44,344 @@
             color: var(--accent-gold);
         }
 
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
+        .nav-links { display: flex; gap: 1.5rem; }
         .nav-links button {
-            background: none;
-            border: none;
-            color: var(--bg-color);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: color 0.3s ease;
-            font-family: 'Arial', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            background: none; border: none; color: var(--bg-color);
+            font-size: 1rem; cursor: pointer; transition: color 0.3s ease;
+            font-family: 'Arial', sans-serif; text-transform: uppercase;
         }
+        .nav-links button:hover, .nav-links button.active { color: var(--accent-gold); }
 
-        .nav-links button:hover, .nav-links button.active {
-            color: var(--accent-gold);
-        }
-
-        /* Main Content Area */
-        main {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        main { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .tab-content { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .tab-content.active { display: block; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Typography & Layouts */
-        h1, h2, h3 {
-            font-weight: normal;
-        }
-        
-        .hero {
-            text-align: center;
-            padding: 3rem 0;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            color: var(--accent-warm);
-        }
-
-        /* Fortune Diary Section */
-        .diary-container {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-left: 5px solid var(--accent-gold);
-        }
-
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            box-sizing: border-box;
-            background-color: #FAFAFA;
-        }
-
         .btn {
-            background-color: var(--accent-gold);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s;
+            background-color: var(--accent-gold); color: white; border: none;
+            padding: 0.8rem 1.5rem; border-radius: 4px; cursor: pointer;
+            font-size: 1rem; transition: background 0.3s;
         }
-
         .btn:hover { background-color: #A88648; }
-        
-        .integration-toggles {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            font-family: sans-serif;
-            font-size: 0.9rem;
-            color: #666;
-        }
+        .btn-icon { background: none; color: var(--text-main); font-size: 1.2rem; cursor: pointer; border: none; transition: color 0.3s;}
+        .btn-icon:hover { color: var(--accent-gold); }
 
-        /* Reading Room (Chatbot Mockup) */
-        .reading-room {
+        /* Home Section with Background Image */
+        #home {
+            background: linear-gradient(rgba(44, 66, 63, 0.8), rgba(44, 66, 63, 0.9)), url('https://images.unsplash.com/photo-1633519391522-fb39962e76f5?auto=format&fit=crop&q=80') center/cover;
+            color: var(--bg-color);
+            border-radius: 12px;
+            padding: 6rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        #home h1 { font-size: 3rem; color: var(--accent-gold); margin-bottom: 1rem;}
+        #home p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem auto;}
+
+        /* Fortune Diary Layout */
+        .diary-layout {
             display: grid;
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 1fr 3fr;
             gap: 2rem;
         }
 
-        .focus-areas {
+        .diary-sidebar {
             background: var(--card-bg);
             padding: 1.5rem;
             border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .diary-sidebar h3 { border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+        .entry-list { list-style: none; padding: 0; }
+        .entry-item {
+            padding: 1rem 0; border-bottom: 1px solid #eee; cursor: pointer;
+            transition: color 0.3s;
+        }
+        .entry-item:hover { color: var(--accent-warm); }
+        .entry-date { font-size: 0.8rem; color: #888; display: block; }
+
+        .diary-main {
+            background: var(--card-bg); padding: 2rem; border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--accent-gold);
+        }
+        textarea {
+            width: 100%; height: 200px; padding: 1rem; border: 1px solid #ccc;
+            border-radius: 4px; font-family: inherit; font-size: 1.1rem;
+            margin-bottom: 1rem; box-sizing: border-box; background-color: #FAFAFA;
+            resize: vertical;
+        }
+        .diary-actions { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;}
+        
+        .integration-toggles {
+            display: flex; gap: 1.5rem; margin-top: 2rem; font-family: sans-serif;
+            font-size: 0.9rem; color: #555; align-items: center;
+            background: #f9f9f9; padding: 1rem; border-radius: 8px;
+        }
+        .integration-toggles label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer;}
+
+        /* Reading Room Layout */
+        .reading-room { display: grid; grid-template-columns: 1fr 3fr; gap: 2rem; }
+        .focus-areas { background: var(--card-bg); padding: 1.5rem; border-radius: 8px; }
+        .focus-areas ul { list-style: none; padding: 0; }
+        .focus-areas li { padding: 0.8rem; border-bottom: 1px solid #eee; cursor: pointer; transition: 0.3s;}
+        .focus-areas li:hover, .focus-areas li.active { color: var(--accent-warm); font-weight: bold; }
+
+        /* Tarot Deck Area */
+        .tarot-deck-area {
+            background: var(--card-bg); padding: 1.5rem; border-radius: 8px;
+            margin-bottom: 1rem; text-align: center;
+        }
+        .deck-controls { margin-bottom: 1rem; }
+        .cards-container {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+            max-height: 250px; overflow-y: auto; padding: 1rem;
+            background: var(--bg-color); border-radius: 8px; border: 1px inset #ddd;
         }
 
-        .focus-areas ul {
-            list-style: none;
-            padding: 0;
+        /* 3D Card Flip CSS */
+        .tarot-card {
+            background-color: transparent; width: 60px; height: 100px;
+            perspective: 1000px; cursor: pointer;
         }
-
-        .focus-areas li {
-            padding: 0.8rem;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
+        .card-inner {
+            position: relative; width: 100%; height: 100%; text-align: center;
+            transition: transform 0.6s; transform-style: preserve-3d;
         }
-        .focus-areas li:hover { color: var(--accent-warm); }
+        .tarot-card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+        }
+        .card-front { background: var(--text-main); color: var(--accent-gold); border: 2px solid var(--accent-gold); }
+        .card-back { background: var(--accent-gold); color: white; transform: rotateY(180deg); border: 2px solid white; font-weight: bold;}
+        
+        /* Shuffle Animation */
+        @keyframes shuffleAnim {
+            0% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(20px) rotate(5deg); }
+            50% { transform: translateX(-20px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(2deg); }
+            100% { transform: translateX(0) rotate(0); }
+        }
+        .shuffling .tarot-card { animation: shuffleAnim 0.5s ease-in-out; }
 
         .chat-interface {
-            background: var(--card-bg);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            height: 400px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: var(--card-bg); border-radius: 8px; display: flex;
+            flex-direction: column; height: 400px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
         .chat-history {
-            flex-grow: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            flex-grow: 1; padding: 1.5rem; overflow-y: auto;
+            border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 1rem;
         }
-
         .msg { padding: 1rem; border-radius: 8px; max-width: 80%; }
         .msg.user { background: var(--bg-color); align-self: flex-end; }
         .msg.ai { background: var(--text-main); color: white; align-self: flex-start; }
 
-        .chat-input {
-            display: flex;
-            padding: 1rem;
-            gap: 1rem;
-        }
-        .chat-input input {
-            flex-grow: 1;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        /* Pricing Section */
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        .price-card {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #eee;
-        }
-
-        .price-card.premium {
-            border: 2px solid var(--accent-gold);
-            transform: scale(1.05);
-        }
-
-        .price { font-size: 2rem; color: var(--text-main); font-weight: bold; margin: 1rem 0;}
+        .chat-input { display: flex; padding: 1rem; gap: 1rem; }
+        .chat-input input { flex-grow: 1; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">✦ Arcana AI</div>
+        <div class="logo">✦ LUMINA</div>
         <div class="nav-links">
             <button class="tab-link active" onclick="openTab('home')">Home</button>
             <button class="tab-link" onclick="openTab('diary')">Fortune Diary</button>
             <button class="tab-link" onclick="openTab('reading')">Reading Room</button>
-            <button class="tab-link" onclick="openTab('pricing')">Pricing</button>
         </div>
     </nav>
 
     <main>
         <section id="home" class="tab-content active">
-            <div class="hero">
-                <h1>Your Spiritual Home in a Hectic World.</h1>
-                <p>Navigating academic pressure, career anxiety, and relationships? Let the cards guide your emotions and uncover the patterns in your life.</p>
-                <br>
-                <button class="btn" onclick="openTab('diary')">Start Your Daily Reflection</button>
-            </div>
+            <h1>Your Spiritual Home.</h1>
+            <p>Navigating academic pressure, career anxiety, and relationships? Let the cards guide your emotions and uncover the patterns in your life.</p>
+            <button class="btn" onclick="openTab('diary')">Enter Your Sanctuary</button>
         </section>
 
         <section id="diary" class="tab-content">
             <h2>The Fortune Diary</h2>
-            <p>Log your daily feelings, interview anxieties, or relationship thoughts. We use this to personalize your readings and map your emotional patterns over time.</p>
+            <p>Log your daily feelings. We use this to personalize your readings and map your emotional patterns over time.</p>
             
-            <div class="diary-container">
-                <h3>Today's Entry</h3>
-                <textarea placeholder="e.g., I have a final round interview today and I'm feeling overwhelmed... or just record a voice note."></textarea>
-                <button class="btn" onclick="saveDiary()">Save to My Aura</button>
-                
-                <div class="integration-toggles">
-                    <span>Sync with: </span>
-                    <label><input type="checkbox" checked> Apple Journal</label>
-                    <label><input type="checkbox"> Notion</label>
-                    <label><input type="checkbox" checked> Google Calendar</label>
+            <div class="diary-layout">
+                <div class="diary-sidebar">
+                    <h3>Past Entries</h3>
+                    <ul class="entry-list" id="diary-history">
+                        <li class="entry-item">
+                            <span class="entry-date">March 20, 2026</span>
+                            Nervous about the upcoming project deadline...
+                        </li>
+                        <li class="entry-item">
+                            <span class="entry-date">March 18, 2026</span>
+                            Feeling disconnected from friends lately.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="diary-main">
+                    <h3>Today's Reflection</h3>
+                    <textarea id="diary-input" placeholder="How are you feeling today? Type here, or use the microphone to record a voice note..."></textarea>
+                    
+                    <div class="diary-actions">
+                        <button class="btn" onclick="saveDiary()">Save to My Aura</button>
+                        <button class="btn-icon" title="Record Voice Note" onclick="alert('Recording started...')"><i class="fa-solid fa-microphone"></i></button>
+                        <button class="btn-icon" title="Upload Image" onclick="alert('File browser opened...')"><i class="fa-solid fa-image"></i></button>
+                    </div>
+                    
+                    <div class="integration-toggles">
+                        <strong>Sync with: </strong>
+                        <label><input type="checkbox" checked> <i class="fa-brands fa-apple" style="font-size: 1.2rem;"></i> Journal</label>
+                        <label><input type="checkbox"> <i class="fa-solid fa-book-open"></i> Notion</label>
+                        <label><input type="checkbox" checked> <i class="fa-regular fa-calendar" style="font-size: 1.2rem;"></i> Google Calendar</label>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="reading" class="tab-content">
             <h2>The Reading Room</h2>
-            <p>Choose your service and let the AI interpret the energies.</p>
             
             <div class="reading-room">
                 <div class="focus-areas">
                     <h3>Focus Areas</h3>
                     <ul>
+                        <li class="active">✨ General Guidance</li>
                         <li>📚 Academics & Studies</li>
                         <li>💼 Career & Interviews</li>
                         <li>❤️ Love & Relationships</li>
-                        <li>🤝 Friendships</li>
                         <li>🌿 Health & Wellness</li>
                     </ul>
-                    <br>
-                    <h3>Services</h3>
-                    <ul>
-                        <li>🃏 Tarot Reading</li>
-                        <li>☯️ Bazi (Coming Soon)</li>
-                        <li>👤 Face Reading (Coming Soon)</li>
-                    </ul>
                 </div>
 
-                <div class="chat-interface">
-                    <div class="chat-history">
-                        <div class="msg ai">Welcome. I sense you have a lot on your mind today. Would you like to draw a digital card, or have you pulled from your own physical deck?</div>
-                        <div class="msg user">I pulled the Three of Pentacles for my job hunt today.</div>
-                        <div class="msg ai">Ah, the Three of Pentacles. This is a beautiful card for career. It signifies collaboration, learning, and mastery. Based on your diary entry about your upcoming interview, the cards suggest...</div>
+                <div>
+                    <div class="tarot-deck-area">
+                        <div class="deck-controls">
+                            <strong>Your Deck (78 Cards)</strong>
+                            <button class="btn" style="padding: 0.5rem 1rem; margin-left: 1rem;" onclick="shuffleDeck()"><i class="fa-solid fa-shuffle"></i> Shuffle Deck</button>
+                        </div>
+                        <div class="cards-container" id="tarot-deck">
+                            </div>
                     </div>
-                    <div class="chat-input">
-                        <input type="text" placeholder="Type your concerns or card pulls here...">
-                        <button class="btn">Send</button>
+
+                    <div class="chat-interface">
+                        <div class="chat-history" id="chat-history">
+                            <div class="msg ai">Welcome. Focus your intention, shuffle the deck above, and select a card when you feel ready.</div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" id="chat-input" placeholder="Type your concerns or thoughts on the card you pulled...">
+                            <button class="btn" onclick="sendChat()">Send</button>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="pricing" class="tab-content">
-            <div class="hero">
-                <h2>Choose Your Path</h2>
-                <p>Start for free, or unlock deeper pattern recognition and advanced arts.</p>
-            </div>
-            
-            <div class="pricing-grid">
-                <div class="price-card">
-                    <h3>Seeker (Freemium)</h3>
-                    <div class="price">$0/mo</div>
-                    <p>Perfect for daily emotional grounding.</p>
-                    <ul style="text-align: left; margin: 2rem auto; max-width: 200px;">
-                        <li>1 Daily Tarot Pull</li>
-                        <li>Basic Fortune Diary</li>
-                        <li>Standard AI Chat</li>
-                    </ul>
-                    <button class="btn" style="background: #ccc; color: #333;">Current Plan</button>
-                </div>
-
-                <div class="price-card premium">
-                    <h3>Mystic (Subscription)</h3>
-                    <div class="price">$8.99/mo</div>
-                    <p>For deep pattern analysis and foresight.</p>
-                    <ul style="text-align: left; margin: 2rem auto; max-width: 200px;">
-                        <li>Unlimited Tarot Readings</li>
-                        <li>Full Diary Pattern Analysis</li>
-                        <li>Unlock Bazi & Face Reading</li>
-                        <li>Notion/Apple Sync Integrations</li>
-                    </ul>
-                    <button class="btn">Upgrade Now</button>
                 </div>
             </div>
         </section>
     </main>
 
     <script>
-        // Simple script to handle tab switching
+        // Tab Navigation
         function openTab(tabId) {
-            // Hide all tabs
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-
-            // Remove active state from all buttons
-            const buttons = document.querySelectorAll('.tab-link');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-            // Show selected tab
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-
-            // Highlight selected button
             event.currentTarget.classList.add('active');
         }
 
+        // Fortune Diary: Save Entry
         function saveDiary() {
-            // In a real app, this text would be parsed, tokenized, and sent to your backend 
-            // to build the user's longitudinal data model for personalized readings.
-            alert("Diary entry saved! Your AI will reference this in your next reading.");
+            const inputField = document.getElementById('diary-input');
+            const text = inputField.value.trim();
+            if (text === "") return;
+
+            const historyList = document.getElementById('diary-history');
+            
+            // Format today's date
+            const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            
+            // Create new list item
+            const li = document.createElement('li');
+            li.className = 'entry-item';
+            
+            // Create a preview snippet (first 40 characters)
+            const snippet = text.length > 40 ? text.substring(0, 40) + '...' : text;
+            
+            li.innerHTML = `<span class="entry-date">${today}</span>${snippet}`;
+            
+            // Add to top of list and clear input
+            historyList.prepend(li);
+            inputField.value = '';
+            
+            alert("Entry saved to your Aura!");
+        }
+
+        // Reading Room: Generate 78 Cards
+        const deckContainer = document.getElementById('tarot-deck');
+        for (let i = 1; i <= 78; i++) {
+            const card = document.createElement('div');
+            card.className = 'tarot-card';
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front">✦</div>
+                    <div class="card-back">${i}</div>
+                </div>
+            `;
+            
+            // Flip interaction
+            card.addEventListener('click', function() {
+                if(!this.classList.contains('flipped')) {
+                    this.classList.add('flipped');
+                    addChatMessage(`I drew Card #${i}.`, 'user');
+                    setTimeout(() => {
+                        addChatMessage(`You have drawn Card #${i}. Take a moment to observe its imagery. How does this card make you feel regarding your current focus?`, 'ai');
+                    }, 1000);
+                }
+            });
+            deckContainer.appendChild(card);
+        }
+
+        // Reading Room: Shuffle Deck
+        function shuffleDeck() {
+            deckContainer.classList.add('shuffling');
+            
+            // Randomize the visual order of the DOM elements
+            Array.from(deckContainer.children).forEach(card => {
+                card.style.order = Math.floor(Math.random() * 78);
+                card.classList.remove('flipped'); // Reset flipped cards
+            });
+
+            setTimeout(() => {
+                deckContainer.classList.remove('shuffling');
+            }, 500);
+        }
+
+        // Reading Room: Chat Functions
+        function sendChat() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(text === "") return;
+            
+            addChatMessage(text, 'user');
+            input.value = '';
+            
+            // Mock AI response
+            setTimeout(() => {
+                addChatMessage("The cards and your aura suggest this is a time for patience. Would you like to pull another card for clarity?", 'ai');
+            }, 1500);
+        }
+
+        function addChatMessage(text, sender) {
+            const chatHistory = document.getElementById('chat-history');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg ${sender}`;
+            msgDiv.textContent = text;
+            chatHistory.appendChild(msgDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to bottom
         }
     </script>
 </body>
