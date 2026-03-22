@@ -208,7 +208,7 @@
                 <div class="diary-sidebar">
                     <h3>Past Entries</h3>
                     <ul class="entry-list" id="diary-history">
-                        </ul>
+                    </ul>
                 </div>
 
                 <div class="diary-main">
@@ -282,12 +282,6 @@
                             <button class="btn" onclick="sendChat()">Send</button>
                         </div>
                     </div>
-                
-                        <div class="chat-input">
-                            <input type="text" id="chat-input" placeholder="Type your concerns or card pulls here...">
-                            <button class="btn" onclick="sendChat()">Send</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -337,7 +331,6 @@
         }
 
         // --- Fortune Diary Engine ---
-        // State Array to hold entries
         let diaryState = [
             { id: 1, date: "March 20, 2026", text: "Nervous about the upcoming project deadline..." },
             { id: 2, date: "March 18, 2026", text: "Feeling disconnected from friends lately. Wondering how to bridge the gap." }
@@ -345,12 +338,11 @@
 
         function renderDiaryList() {
             const list = document.getElementById('diary-history');
-            list.innerHTML = ''; // Clear current list
+            list.innerHTML = ''; 
             
             diaryState.forEach(entry => {
                 const li = document.createElement('li');
                 li.className = 'entry-item';
-                // Attach click event to load this entry
                 li.onclick = () => loadEntry(entry.id);
                 
                 const snippet = entry.text.length > 40 ? entry.text.substring(0, 40) + '...' : entry.text;
@@ -360,12 +352,17 @@
         }
 
         function loadEntry(id) {
-            // Find the entry in our state array
             const entry = diaryState.find(e => e.id === id);
             if(entry) {
-                // Populate the text box with the full text
                 document.getElementById('diary-input').value = entry.text;
             }
+        }
+
+        // Placed startNewEntry OUTSIDE of saveDiary to fix the syntax error
+        function startNewEntry() {
+            const inputField = document.getElementById('diary-input');
+            inputField.value = ''; 
+            inputField.focus();    
         }
 
         function saveDiary() {
@@ -375,30 +372,21 @@
 
             const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
         
-        function startNewEntry() {
-            const inputField = document.getElementById('diary-input');
-            inputField.value = ''; // Clears the text box
-            inputField.focus();    // Automatically puts the typing cursor back in the box
-        }
-            // Add new entry to the BEGINNING of the state array
             diaryState.unshift({
-                id: Date.now(), // Generate a unique ID based on time
+                id: Date.now(),
                 date: today,
                 text: text
             });
 
-            // Clear input and re-render the sidebar
             inputField.value = '';
             renderDiaryList();
             alert("Entry saved to your Aura!");
         }
 
-        // Initialize Diary on page load
         renderDiaryList();
 
 
         // --- Reading Room Functions ---
-        // Generate 78 Cards
         const deckContainer = document.getElementById('tarot-deck');
         for (let i = 1; i <= 78; i++) {
             const card = document.createElement('div');
@@ -409,14 +397,12 @@
                     <div class="card-back">${i}</div>
                 </div>
             `;
-            // Flip interaction (No automatic chat spam)
             card.addEventListener('click', function() {
                 this.classList.toggle('flipped');
             });
             deckContainer.appendChild(card);
         }
 
-        // Shuffle Deck
         function shuffleDeck() {
             deckContainer.classList.add('shuffling');
             Array.from(deckContainer.children).forEach(card => {
@@ -426,9 +412,8 @@
             setTimeout(() => { deckContainer.classList.remove('shuffling'); }, 500);
         }
 
-        // Manual Chat
-        // Manual Chat Flow
-        let chatStep = 0; // Tracks where we are in the conversation
+        // --- Manual Chat Flow ---
+        let chatStep = 0; 
 
         function sendChat() {
             const input = document.getElementById('chat-input');
@@ -437,16 +422,14 @@
             
             const chatHistory = document.getElementById('chat-history');
             
-            // 1. Post the user's message
             const msgDiv = document.createElement('div');
             msgDiv.className = `msg user`;
             msgDiv.textContent = text;
             chatHistory.appendChild(msgDiv);
             chatHistory.scrollTop = chatHistory.scrollHeight; 
             
-            input.value = ''; // Clear input box
+            input.value = ''; 
             
-            // 2. Simulate the AI thinking, then replying based on the step
             if (chatStep === 0) {
                 setTimeout(() => {
                     const aiReply = document.createElement('div');
@@ -454,10 +437,9 @@
                     aiReply.textContent = "I hear you. Let's use a Past-Present-Future spread for this. Pick 3 cards and shuffle from the digital deck above, or use your own physical cards. Tell me what you draw, and let's begin our reading.";
                     chatHistory.appendChild(aiReply);
                     chatHistory.scrollTop = chatHistory.scrollHeight;
-                }, 1000); // 1-second delay feels natural
+                }, 1000); 
                 chatStep++;
             } else {
-                // Generic response for any messages sent after the first one
                 setTimeout(() => {
                     const aiReply = document.createElement('div');
                     aiReply.className = `msg ai`;
@@ -466,8 +448,6 @@
                     chatHistory.scrollTop = chatHistory.scrollHeight;
                 }, 1500);
             }
-        }
-            // Note: AI auto-reply removed per your request!
         }
     </script>
 </body>
