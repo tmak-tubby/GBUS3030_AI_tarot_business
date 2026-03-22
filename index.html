@@ -412,41 +412,113 @@
             setTimeout(() => { deckContainer.classList.remove('shuffling'); }, 500);
         }
 
-        // --- Manual Chat Flow ---
-        let chatStep = 0; 
 
-        function sendChat() {
+        // --- LIVE AI Chat Flow via OpenRouter ---
+        
+        // This variable will hold your key while the page is open
+        let sessionApiKey = ""; 
+
+        async function sendChat() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if(text === "") return;
             
+            // Ask for API key on the first message so it doesn't have to be saved in the code
+            if (!sessionApiKey) {
+                sessionApiKey = prompt("For this live demo, please paste your OpenRouter API Key:\n(It will only be saved in your browser for this session)");
+                if (!sessionApiKey) {
+                    alert("An API key is required to consult the cards.");
+                    return;
+                }
+            }
+
             const chatHistory = document.getElementById('chat-history');
             
+            // 1. Post the user's message to the chat
             const msgDiv = document.createElement('div');
             msgDiv.className = `msg user`;
             msgDiv.textContent = text;
             chatHistory.appendChild(msgDiv);
             chatHistory.scrollTop = chatHistory.scrollHeight; 
             
-            input.value = ''; 
+            input.value = ''; // Clear input box
             
-            if (chatStep === 0) {
-                setTimeout(() => {
-                    const aiReply = document.createElement('div');
-                    aiReply.className = `msg ai`;
-                    aiReply.textContent = "I hear you. Let's use a Past-Present-Future spread for this. Pick 3 cards and shuffle from the digital deck above, or use your own physical cards. Tell me what you draw, and let's begin our reading.";
-                    chatHistory.appendChild(aiReply);
-                    chatHistory.scrollTop = chatHistory.scrollHeight;
-                }, 1000); 
-                chatStep++;
+            // 2. Show a "typing..." or "consulting..." message
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = `msg ai`;
+            loadingDiv.innerHTML = "<i>Consulting the cards and your aura...</i>";
+            chatHistory.appendChild(loadingDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // 3. MAGIC HAPPENS HERE: Build the Context from the Fortune Diary!
+            // We grab the user's past entries to feed to the AI secretly.
+            let journalContext = "USER'S RECENT JOURNAL ENTRIES:\n";
+            if (diaryState.length > 0) {
+                // Grab up to the 3 most recent entries
+                diaryState.slice(0, 3).forEach(entry => { 
+                    journalContext += `- Date: ${entry.date} | Entry: ${entry.text}\n`;
+                });
             } else {
-                setTimeout(() => {
-                    const aiReply = document.createElement('div');
-                    aiReply.className = `msg ai`;
-                    aiReply.textContent = "Interesting. The energies around this are shifting. How does that imagery resonate with your current feelings?";
-                    chatHistory.appendChild(aiReply);
-                    chatHistory.scrollTop = chatHistory.scrollHeight;
-                }, 1500);
+                journalContext += "The user hasn't written any journal entries yet.\n";
+            }
+
+            // 4. Create the Master System Prompt
+            const systemPrompt = `You are Lumina, an empathetic, mystical, and grounded AI Tarot reader. 
+            Your tone is warm, comforting, and insightful—never robotic.
+            You act as a 'Spiritual Home' for people facing academic, career, or relationship stress.
+            
+            INSTRUCTIONS:
+            1. Read the user's recent journal entries provided below to understand their emotional state.
+            2. If they drew a card, interpret it heavily through the context of their journal entries. 
+            3. Do not mention that you are reading their journal unless it is deeply relevant to the advice. Just act like you "sense" these themes.
+            4. Keep responses conversational, spaced out, and concise (2-3 short paragraphs max).
+            
+            ${journalContext}`;
+
+            // 5. Connect to OpenRouter API
+            try {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${sessionApiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        // Using a high-quality free model on OpenRouter for testing! 
+                        // You can change this to "anthropic/claude-3-haiku" or "openai/gpt-4o" later.
+                        "model": "meta-llama/llama-3-8b-instruct:free", 
+                        "messages": [
+                            {"role": "system", "content": systemPrompt},
+                            {"role": "user", "content": text}
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message || "API Error");
+                }
+
+                const aiResponseText = data.choices[0].message.content;
+
+                // 6. Remove loading message and show real response
+                chatHistory.removeChild(loadingDiv);
+                const aiReply = document.createElement('div');
+                aiReply.className = `msg ai`;
+                // Replace regular line breaks with HTML line breaks so it formats nicely
+                aiReply.innerHTML = aiResponseText.replace(/\n/g, '<br>'); 
+                chatHistory.appendChild(aiReply);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            } catch (error) {
+                console.error(error);
+                chatHistory.removeChild(loadingDiv);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = `msg ai`;
+                errorDiv.textContent = "I'm sorry, the connection to the spiritual realm was interrupted. (Please check your API key or connection).";
+                chatHistory.appendChild(errorDiv);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
             }
         }
     </script>
