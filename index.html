@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARCANA Diary | AI Spiritual Home</title>
+    <title>Lumina | AI Spiritual Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Modern Mystical Retro Palette */
         :root {
             --bg-color: #F3EAF4; /* Soft vintage lilac */
             --text-main: #3D2B4A; /* Deep plum/aubergine */
-            --accent-gold: #C5A059; /*  antique gold */
+            --accent-gold: #C5A059; /* Antique gold */
             --accent-warm: #8C537B; /* Muted retro berry */
-            --card-bg: #FFFFFF; /* Clean white for readability */
+            --card-bg: #FFFFFF; /* Clean white */
         }
 
         body {
@@ -73,12 +74,11 @@
         /* Home Section */
         #home {
             background: linear-gradient(rgba(61, 43, 74, 0.8), rgba(61, 43, 74, 0.9)), url('https://images.unsplash.com/photo-1596711913175-1030e447b9cb?q=80&w=2000&auto=format&fit=crop') center/cover;
-            color: var(--bg-color); /* Light lilac text  */
+            color: var(--bg-color);
             border-radius: 12px;
             padding: 6rem 2rem;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-           
         }
         #home h1 { font-size: 3rem; color: var(--accent-gold); margin-bottom: 1rem;}
         #home p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem auto;}
@@ -137,16 +137,19 @@
         }
 
         /* 3D Card Flip */
-        .tarot-card { background-color: transparent; width: 50px; height: 85px; perspective: 1000px; cursor: pointer; }
+        .tarot-card { background-color: transparent; width: 75px; height: 115px; perspective: 1000px; cursor: pointer; }
         .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
         .tarot-card.flipped .card-inner { transform: rotateY(180deg); }
         .card-front, .card-back {
             position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
-            border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+            border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
         }
-        .card-front { background: var(--text-main); color: var(--accent-gold); border: 2px solid var(--accent-gold); }
-        .card-back { background: var(--accent-gold); color: white; transform: rotateY(180deg); border: 2px solid white; font-weight: bold;}
+        .card-front { background: var(--text-main); color: var(--accent-gold); border: 2px solid var(--accent-gold); font-size: 1.5rem;}
+        .card-back { 
+            background: var(--bg-color); color: var(--text-main); transform: rotateY(180deg); 
+            border: 2px solid var(--accent-gold); padding: 5px; box-sizing: border-box;
+        }
         
         @keyframes shuffleAnim {
             0% { transform: translateX(0) rotate(0); }
@@ -185,7 +188,7 @@
 <body>
 
     <nav>
-        <div class="logo">✦ ARCANA Diary</div>
+        <div class="logo">✦ LUMINA</div>
         <div class="nav-links">
             <button class="tab-link active" onclick="openTab('home')">Home</button>
             <button class="tab-link" onclick="openTab('diary')">Fortune Diary</button>
@@ -272,6 +275,12 @@
                             <button class="btn" style="padding: 0.5rem 1rem;" onclick="shuffleDeck()"><i class="fa-solid fa-shuffle"></i> Shuffle Deck</button>
                         </div>
                         <div class="cards-container" id="tarot-deck"></div>
+                        
+                        <div style="margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                            <button class="btn" style="background-color: var(--text-main); width: 100%;" onclick="sendSelectedCards()">
+                                <i class="fa-solid fa-hand-sparkles"></i> Send Selected Cards to Lumina
+                            </button>
+                        </div>
                     </div>
 
                     <div class="chat-interface">
@@ -385,22 +394,45 @@
 
         renderDiaryList();
 
-        // --- Reading Room Functions ---
+        // --- Reading Room Functions: Visual Deck Generator ---
         const deckContainer = document.getElementById('tarot-deck');
-        for (let i = 1; i <= 78; i++) {
+        
+        const majorArcana = ["The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor", "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit", "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance", "The Devil", "The Tower", "The Star", "The Moon", "The Sun", "Judgement", "The World"];
+        const suits = [
+            { name: "Wands", icon: "🪄", color: "linear-gradient(135deg, #E29578, #D96C4E)" }, 
+            { name: "Cups", icon: "🍷", color: "linear-gradient(135deg, #83C5BE, #006D77)" }, 
+            { name: "Swords", icon: "⚔️", color: "linear-gradient(135deg, #B5838D, #6D6875)" }, 
+            { name: "Pentacles", icon: "🪙", color: "linear-gradient(135deg, #CCD5AE, #588157)" } 
+        ];
+        const ranks = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"];
+
+        let fullDeck = [];
+        majorArcana.forEach(card => fullDeck.push({ name: card, icon: "✧", color: "linear-gradient(135deg, #E9C46A, #F4A261)" })); 
+        suits.forEach(suit => {
+            ranks.forEach(rank => {
+                fullDeck.push({ name: `${rank} of <br>${suit.name}`, icon: suit.icon, color: suit.color });
+            });
+        });
+
+        fullDeck.forEach((cardData) => {
             const card = document.createElement('div');
             card.className = 'tarot-card';
             card.innerHTML = `
                 <div class="card-inner">
-                    <div class="card-front">✦</div>
-                    <div class="card-back">${i}</div>
+                    <div class="card-front" style="background: var(--text-main); border: 1px solid var(--accent-gold);">✦</div>
+                    <div class="card-back" style="background: ${cardData.color}; border: 2px solid white; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                        <span style="font-size: 1.5rem; margin-bottom: 5px;">${cardData.icon}</span>
+                        <span class="card-name-text" style="font-size: 0.65rem; font-family: sans-serif; line-height: 1.2; text-transform: uppercase; font-weight: bold; text-align: center;">${cardData.name}</span>
+                    </div>
                 </div>
             `;
+            
             card.addEventListener('click', function() {
                 this.classList.toggle('flipped');
             });
+            
             deckContainer.appendChild(card);
-        }
+        });
 
         function shuffleDeck() {
             deckContainer.classList.add('shuffling');
@@ -409,6 +441,26 @@
                 card.classList.remove('flipped'); 
             });
             setTimeout(() => { deckContainer.classList.remove('shuffling'); }, 500);
+        }
+
+        // --- Send Selected Cards Logic ---
+        function sendSelectedCards() {
+            const flippedCards = document.querySelectorAll('.tarot-card.flipped .card-name-text');
+            
+            if (flippedCards.length === 0) {
+                alert("Please click to reveal at least one card from the deck first!");
+                return;
+            }
+
+            let drawnNames = [];
+            flippedCards.forEach(card => {
+                drawnNames.push(card.innerHTML.replace('<br>', ' '));
+            });
+
+            const message = `I just drew these cards: ${drawnNames.join(', ')}.`;
+            const inputField = document.getElementById('chat-input');
+            inputField.value = message;
+            sendChat(); 
         }
 
         // --- MOCK AI LOGIC (WIZARD OF OZ) ---
@@ -422,7 +474,6 @@
             
             const chatHistory = document.getElementById('chat-history');
             
-            // 1. Show user message
             const msgDiv = document.createElement('div');
             msgDiv.className = `msg user`;
             msgDiv.textContent = rawText; 
@@ -431,32 +482,29 @@
             
             input.value = ''; 
             
-            // 2. Show loader
             const loadingDiv = document.createElement('div');
             loadingDiv.className = `msg ai`;
             loadingDiv.innerHTML = "<i>Consulting the cards and your aura...</i>";
             chatHistory.appendChild(loadingDiv);
             chatHistory.scrollTop = chatHistory.scrollHeight;
 
-            // 3. Mock logic delay
             setTimeout(() => {
                 chatHistory.removeChild(loadingDiv);
                 const aiReply = document.createElement('div');
                 aiReply.className = `msg ai`;
 
-                // Check their latest diary entry for context
                 let latestDiaryText = "";
                 if (diaryState.length > 0) {
                     latestDiaryText = diaryState[0].text.toLowerCase();
                 }
 
                 if (chatStep === 0) {
-                    aiReply.innerHTML = "I hear you. Let's use a Past-Present-Future spread for this. Pick 3 cards and shuffle from the digital deck above, or use your own physical deck. Tell me what you draw, and let's begin.";
+                    aiReply.innerHTML = "I hear you. Let's use a Past-Present-Future spread for this. Pick 3 cards and shuffle from the digital deck above, or use your own physical deck. When you are ready, send your selected cards.";
                     chatStep++;
                 } 
                 else if (text.includes("pentacles") || text.includes("wands") || text.includes("career") || text.includes("job")) {
                     if (latestDiaryText.includes("interview") || latestDiaryText.includes("project") || latestDiaryText.includes("deadline")) {
-                        aiReply.innerHTML = "This card carries strong energy regarding your ambitions. I sense this ties directly into the anxiety you logged in your diary recently about your workload. The cards are asking you to ground yourself—you have done the preparation, now you must trust your foundation.";
+                        aiReply.innerHTML = "This draw carries strong energy regarding your ambitions. I sense this ties directly into the anxiety you logged in your diary recently about your workload. The cards are asking you to ground yourself—you have done the preparation, now you must trust your foundation.";
                     } else {
                         aiReply.innerHTML = "A powerful draw for the material world. The imagery here suggests a period of building and transition. How does the energy of this card reflect what you are feeling in your career right now?";
                     }
@@ -465,7 +513,7 @@
                     if (latestDiaryText.includes("friend") || latestDiaryText.includes("lonely") || latestDiaryText.includes("disconnected") || latestDiaryText.includes("relationship")) {
                         aiReply.innerHTML = "This imagery speaks volumes about your current connections. Reflecting on your recent diary entry about feeling disconnected, this card suggests it is a time for reaching out. The bridge isn't broken, it just needs someone to take the first step.";
                     } else {
-                        aiReply.innerHTML = "The element of water is strong here, dealing with emotions and connections. What is your heart telling you as you look at this card?";
+                        aiReply.innerHTML = "The element of water is strong here, dealing with emotions and connections. What is your heart telling you as you look at this draw?";
                     }
                 }
                 else {
