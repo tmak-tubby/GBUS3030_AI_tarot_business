@@ -358,7 +358,6 @@
             }
         }
 
-        // Placed startNewEntry OUTSIDE of saveDiary to fix the syntax error
         function startNewEntry() {
             const inputField = document.getElementById('diary-input');
             inputField.value = ''; 
@@ -384,7 +383,6 @@
         }
 
         renderDiaryList();
-
 
         // --- Reading Room Functions ---
         const deckContainer = document.getElementById('tarot-deck');
@@ -412,125 +410,72 @@
             setTimeout(() => { deckContainer.classList.remove('shuffling'); }, 500);
         }
 
+        // --- MOCK AI LOGIC (WIZARD OF OZ) ---
+        let chatStep = 0;
 
-        // --- LIVE AI Chat Flow via OpenRouter ---
-        
-        // This variable will hold your key while the page is open
-        let sessionApiKey = ""; 
-
-        async function sendChat() {
+        function sendChat() {
             const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if(text === "") return;
+            const rawText = input.value.trim();
+            const text = rawText.toLowerCase(); 
+            if(rawText === "") return;
             
-            // Ask for API key on the first message so it doesn't have to be saved in the code
-            if (!sessionApiKey) {
-                sessionApiKey = prompt("For this live demo, please paste your OpenRouter API Key:\n(It will only be saved in your browser for this session)");
-                if (!sessionApiKey) {
-                    alert("An API key is required to consult the cards.");
-                    return;
-                }
-            }
-
             const chatHistory = document.getElementById('chat-history');
             
-            // 1. Post the user's message to the chat
+            // 1. Show user message
             const msgDiv = document.createElement('div');
             msgDiv.className = `msg user`;
-            msgDiv.textContent = text;
+            msgDiv.textContent = rawText; 
             chatHistory.appendChild(msgDiv);
             chatHistory.scrollTop = chatHistory.scrollHeight; 
             
-            input.value = ''; // Clear input box
+            input.value = ''; 
             
-            // 2. Show a "typing..." or "consulting..." message
+            // 2. Show loader
             const loadingDiv = document.createElement('div');
             loadingDiv.className = `msg ai`;
             loadingDiv.innerHTML = "<i>Consulting the cards and your aura...</i>";
             chatHistory.appendChild(loadingDiv);
             chatHistory.scrollTop = chatHistory.scrollHeight;
 
-            // 3. MAGIC HAPPENS HERE: Build the Context from the Fortune Diary!
-            // We grab the user's past entries to feed to the AI secretly.
-            let journalContext = "USER'S RECENT JOURNAL ENTRIES:\n";
-            if (diaryState.length > 0) {
-                // Grab up to the 3 most recent entries
-                diaryState.slice(0, 3).forEach(entry => { 
-                    journalContext += `- Date: ${entry.date} | Entry: ${entry.text}\n`;
-                });
-            } else {
-                journalContext += "The user hasn't written any journal entries yet.\n";
-            }
-
-            // 4. Create the Master System Prompt
-            const systemPrompt = `You are Lumina, an empathetic, mystical, and grounded AI Tarot reader. 
-            Your tone is warm, comforting, and insightful—never robotic.
-            You act as a 'Spiritual Home' for people facing academic, career, or relationship stress.
-            
-            INSTRUCTIONS:
-            1. Read the user's recent journal entries provided below to understand their emotional state.
-            2. If they drew a card, interpret it heavily through the context of their journal entries. 
-            3. Do not mention that you are reading their journal unless it is deeply relevant to the advice. Just act like you "sense" these themes.
-            4. Keep responses conversational, spaced out, and concise (2-3 short paragraphs max).
-            
-            ${journalContext}`;
-
-            // 5. Connect to OpenRouter API
-            try {
-                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${sessionApiKey}`,
-                        "Content-Type": "application/json",
-                        // OpenRouter requires these two headers when calling from a browser!
-                        "HTTP-Referer": window.location.href, 
-                        "X-Title": "Lumina Tarot Mockup"
-                    },
-                    body: JSON.stringify({
-                        "model": "meta-llama/llama-3-8b-instruct:free", 
-                        "messages": [
-                            {"role": "system", "content": systemPrompt},
-                            {"role": "user", "content": text}
-                        ]
-                    })
-                });
-
-                // Check if the API rejected our request before trying to read it
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error("Detailed API Error:", errorData);
-                    throw new Error(`Error ${response.status}: Please check the console.`);
-                }
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error.message || "API Error");
-                }
-
-                const aiResponseText = data.choices[0].message.content;
-
-                // 6. Remove loading message and show real response
+            // 3. Mock logic delay
+            setTimeout(() => {
                 chatHistory.removeChild(loadingDiv);
                 const aiReply = document.createElement('div');
                 aiReply.className = `msg ai`;
-                aiReply.innerHTML = aiResponseText.replace(/\n/g, '<br>'); 
+
+                // Check their latest diary entry for context
+                let latestDiaryText = "";
+                if (diaryState.length > 0) {
+                    latestDiaryText = diaryState[0].text.toLowerCase();
+                }
+
+                if (chatStep === 0) {
+                    aiReply.innerHTML = "I hear you. Let's use a Past-Present-Future spread for this. Pick 3 cards and shuffle from the digital deck above, or use your own physical deck. Tell me what you draw, and let's begin.";
+                    chatStep++;
+                } 
+                else if (text.includes("pentacles") || text.includes("wands") || text.includes("career") || text.includes("job")) {
+                    if (latestDiaryText.includes("interview") || latestDiaryText.includes("project") || latestDiaryText.includes("deadline")) {
+                        aiReply.innerHTML = "This card carries strong energy regarding your ambitions. I sense this ties directly into the anxiety you logged in your diary recently about your workload. The cards are asking you to ground yourself—you have done the preparation, now you must trust your foundation.";
+                    } else {
+                        aiReply.innerHTML = "A powerful draw for the material world. The imagery here suggests a period of building and transition. How does the energy of this card reflect what you are feeling in your career right now?";
+                    }
+                } 
+                else if (text.includes("cups") || text.includes("love") || text.includes("friend")) {
+                    if (latestDiaryText.includes("friend") || latestDiaryText.includes("lonely") || latestDiaryText.includes("disconnected") || latestDiaryText.includes("relationship")) {
+                        aiReply.innerHTML = "This imagery speaks volumes about your current connections. Reflecting on your recent diary entry about feeling disconnected, this card suggests it is a time for reaching out. The bridge isn't broken, it just needs someone to take the first step.";
+                    } else {
+                        aiReply.innerHTML = "The element of water is strong here, dealing with emotions and connections. What is your heart telling you as you look at this card?";
+                    }
+                }
+                else {
+                    aiReply.innerHTML = "The energies around this are shifting. Take a deep breath. What is the most prominent emotion you feel when you look at the cards right now?";
+                }
+
                 chatHistory.appendChild(aiReply);
                 chatHistory.scrollTop = chatHistory.scrollHeight;
 
-            } catch (error) {
-                console.error("Full error details:", error);
-                chatHistory.removeChild(loadingDiv);
-                const errorDiv = document.createElement('div');
-                errorDiv.className = `msg ai`;
-                errorDiv.innerHTML = `I'm sorry, the connection was interrupted.<br><br><small style="color:#D96C4E;"><b>Developer Note:</b> ${error.message}</small>`;
-                chatHistory.appendChild(errorDiv);
-                chatHistory.scrollTop = chatHistory.scrollHeight;
-            }
+            }, 1500); 
         }
-            
-            
-            
     </script>
 </body>
 </html>
