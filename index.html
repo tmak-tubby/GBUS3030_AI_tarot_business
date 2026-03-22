@@ -481,11 +481,12 @@
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${sessionApiKey}`,
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        // OpenRouter requires these two headers when calling from a browser!
+                        "HTTP-Referer": window.location.href, 
+                        "X-Title": "Lumina Tarot Mockup"
                     },
                     body: JSON.stringify({
-                        // Using a high-quality free model on OpenRouter for testing! 
-                        // You can change this to "anthropic/claude-3-haiku" or "openai/gpt-4o" later.
                         "model": "meta-llama/llama-3-8b-instruct:free", 
                         "messages": [
                             {"role": "system", "content": systemPrompt},
@@ -493,6 +494,13 @@
                         ]
                     })
                 });
+
+                // Check if the API rejected our request before trying to read it
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Detailed API Error:", errorData);
+                    throw new Error(`Error ${response.status}: Please check the console.`);
+                }
 
                 const data = await response.json();
                 
@@ -506,21 +514,22 @@
                 chatHistory.removeChild(loadingDiv);
                 const aiReply = document.createElement('div');
                 aiReply.className = `msg ai`;
-                // Replace regular line breaks with HTML line breaks so it formats nicely
                 aiReply.innerHTML = aiResponseText.replace(/\n/g, '<br>'); 
                 chatHistory.appendChild(aiReply);
                 chatHistory.scrollTop = chatHistory.scrollHeight;
 
             } catch (error) {
-                console.error(error);
+                console.error("Full error details:", error);
                 chatHistory.removeChild(loadingDiv);
                 const errorDiv = document.createElement('div');
                 errorDiv.className = `msg ai`;
-                errorDiv.textContent = "I'm sorry, the connection to the spiritual realm was interrupted. (Please check your API key or connection).";
+                errorDiv.innerHTML = `I'm sorry, the connection was interrupted.<br><br><small style="color:#D96C4E;"><b>Developer Note:</b> ${error.message}</small>`;
                 chatHistory.appendChild(errorDiv);
                 chatHistory.scrollTop = chatHistory.scrollHeight;
             }
-        }
+            
+            
+            
     </script>
 </body>
 </html>
