@@ -14,7 +14,7 @@ Lumina utilizes a proprietary data loop to act as a longitudinal emotional guide
 
 **Monetization (Freemium):**
 * **Seeker ($0/mo):** 1 daily tarot pull, basic diary logging, standard AI chat.
-* **Mystic ($8.99/mo):** Unlimited readings, full diary pattern analysis, unlocks advanced services (Bazi, Face & Palm Reading), and full API syncing with external journals.
+* **Mystic ($9.99/mo):** Unlimited readings, full diary pattern analysis, unlocks advanced services (Bazi, Face & Palm Reading), and full API syncing with external journals.
 
 ## About This Prototype
 This repository is a static frontend mockup built with HTML, CSS, and Vanilla JavaScript. 
